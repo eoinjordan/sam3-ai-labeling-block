@@ -1,0 +1,93 @@
+{
+    "version": 1,
+    "type": "ai-action",
+    "info": {
+        "name": "Bounding box labeling with SAM 3",
+        "description": "Labels objects with bounding boxes from text prompts using Meta's SAM 3 (Segment Anything 3), which finds every instance of a phrase such as 'hard hat' or 'yellow school bus'. Runs on a Hugging Face Space (eoinedge/sam3 by default), so no GPU spins up in Edge Impulse. Images are sent to that Space.",
+        "operatesOn": [
+            "images_object_detection"
+        ]
+    },
+    "parameters": [
+        {
+            "name": "Prompt",
+            "value": "hard hat (hardhat, 0.5)",
+            "type": "string",
+            "help": "One object per line: what to look for, then the label and the minimum confidence in parentheses. Short noun phrases work best.",
+            "param": "prompt",
+            "multiline": true,
+            "placeholder": "hard hat (hardhat, 0.5)",
+            "hint": "One object per line, e.g. 'person (person, 0.5)'. Without parentheses the phrase is the label and the minimum confidence is 0.5."
+        },
+        {
+            "name": "Existing bounding boxes",
+            "value": "no",
+            "type": "select",
+            "valid": [
+                {
+                    "label": "Keep them; add only objects that are not already labelled",
+                    "value": "no"
+                },
+                {
+                    "label": "Replace those whose label is in the prompt",
+                    "value": "matching-prompt"
+                },
+                {
+                    "label": "Replace all of them",
+                    "value": "yes"
+                }
+            ],
+            "param": "delete-existing-bounding-boxes"
+        },
+        {
+            "name": "Ignore objects smaller than (%)",
+            "optional": true,
+            "value": 0,
+            "type": "float",
+            "param": "ignore-objects-smaller-than",
+            "help": "Objects whose box covers less than this share of the image are ignored"
+        },
+        {
+            "name": "Ignore objects larger than (%)",
+            "optional": true,
+            "value": 100,
+            "type": "float",
+            "param": "ignore-objects-larger-than",
+            "help": "Objects whose box covers more than this share of the image are ignored"
+        },
+        {
+            "name": "Non-max suppression",
+            "help": "Remove overlapping boxes of the same label, keeping the highest score",
+            "value": "true",
+            "type": "flag",
+            "param": "nms"
+        },
+        {
+            "name": "NMS IoU threshold",
+            "help": "Boxes of the same label that overlap more than this are merged",
+            "value": "0.5",
+            "type": "float",
+            "param": "nms-iou-threshold",
+            "showIf": {
+                "parameter": "nms",
+                "operator": "eq",
+                "value": "true"
+            }
+        },
+        {
+            "name": "Hugging Face Space",
+            "value": "eoinedge/sam3",
+            "type": "string",
+            "help": "The Space that runs SAM 3. Duplicate eoinedge/sam3 onto your own hardware for large datasets or private images.",
+            "param": "space"
+        },
+        {
+            "name": "Hugging Face token",
+            "value": "",
+            "type": "secret",
+            "optional": true,
+            "help": "Optional. Calls count against this account's ZeroGPU quota instead of the anonymous one; a PRO account gets far more. Needed for a private Space.",
+            "param": "HF_TOKEN"
+        }
+    ]
+}

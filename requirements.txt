@@ -1,0 +1,4 @@
+edgeimpulse-api==1.95.22
+gradio_client==2.7.2
+pillow==12.3.0
+requests==2.34.2
